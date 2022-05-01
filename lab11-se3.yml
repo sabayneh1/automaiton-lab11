@@ -1,0 +1,44 @@
+- name: task failure handlers 
+  hosts: ansible-c07-vm1
+  tasks: 
+    - name: creating a locfile
+      file:
+        path: /home/locfile  
+        state: touch
+        mode: 0644
+        owner: root
+        group: root 
+    
+    - name: coping file to /tmp directory 
+      copy:
+        src: /home/locfile 
+        dest: /tmp
+        mode: 0444
+        owner: root
+        group: root 
+        remote_src: true 
+  
+    - name: SELinux setup
+      file:
+        path: /tmp/locfile 
+        setype: etc_t 
+        
+    - name: status of file
+      stat: 
+        path: /temp/locfile
+      register: stat_output 
+    - name: display output 
+      debug:
+        var: stat_output
+- name: creating files 
+  hosts: linux 
+  tasks:
+  - name: creating files on managed nodes 
+    file:
+      path: /home/emptyfile
+      state: touch 
+      mode: 0644
+      owner: root
+      group: root 
+
+      

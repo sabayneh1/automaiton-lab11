@@ -1,0 +1,35 @@
+- name: task failure handlers 
+  hosts: linux
+       
+  tasks: 
+    - name: chaniging in /etc/profile file 
+      block:
+        - name:  ssh timeout 
+          blockinfile: 
+            path: /etc/profile  
+            insertafter: EOF 
+            backup: yes
+            state: present
+            block: |
+              export TMOUT=900 
+
+    
+        - name: setting umask 
+          lineinfile:
+            path: /etc/profile 
+            regex: "^umask"
+            line: "umask 0077"
+            state: present
+      rescue:
+        - name: task to run if the above tasks failure
+          lineinfile:
+            path: ~/.bash_profile 
+            regex: "^umask"
+            line: "umask 0066"
+            state: restarted 
+              
+      always:      
+        - name: task to run always 
+          debug:
+            msg: playbook execution completed 
+          

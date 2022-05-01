@@ -1,0 +1,20 @@
+- name: restart apache service
+  hosts: ansible-c07-vm1
+       
+  tasks: 
+    - name: 
+      yum:
+          name: httpd 
+          state: present 
+      notify: restart_httpd
+
+    - name: 
+      copy: 
+        src: index.html
+        dest: /var/www/html/index.html
+      notify: restart_httpd
+  handlers:
+      - name: restart_httpd
+        systemd:
+          name: httpd
+          state: restarted 
